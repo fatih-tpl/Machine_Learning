@@ -1,46 +1,51 @@
 from openpyxl import Workbook,load_workbook
 
 class RobotTestSuiteRunner():
-
+    
      #Controlling to objects         
-     def Operate(self):
+     def Operate(self,TxtFile,ExcelFile):
           j = 2                                                                #initial row number
           offset = 0                                                           #initial reference offset value
           while offset != 2:                                                   #if offset variable counts two empty(none) row, the loop will end                          
-                list = self.ReadingColumn(j)                                   
+                list = self.ReadingColumn(ExcelFile,j)                                   
                 situation = self.CheckingEmptyRows(list)                        
                 if situation==True:
                      offset +=1
-                     j +=1
+                     j+=1
                 else:
-                     j = self.WriteText(list,j)
-
+                     j = self.WriteText(TxtFile,list,j)
+          print('Finished your process.')
+                     
+     
      #Checking the Empty Rows
      def CheckingEmptyRows(self,list):
           if len(list) == list.count(None):                                    #checking the empty rows
                return True         
-     
+          return False
+
      #Reading and Taking column's data
-     def ReadingColumn(self,j):
-          wb = load_workbook('RobotTestSuitesParamsList(deneme).xlsx')         #load the excel file to a variable.
-          ws = wb.active                                                       #taking active sheet and assignment a variable.
-          print(ws)                                                            #printing name of the active worksheet on the terminal.
+     def ReadingColumn(self,ExcelFile,j):
+          wb = load_workbook(ExcelFile)         #load the excel file to a variable.
+          ws = wb.active                                                       #taking active sheet and assignment a variable.                                                            #printing name of the active worksheet on the terminal.
           i=1                                                                  #first column number
           data = []                                                            #a list for excel datas
-          while i<=19:
-               data.append(ws.cell(j,i).value)                                 #taking data and adding a list from excel file         
-               i=i+1
-               
-          print(data)                                                          #print datas of the row 
-          return data
+          try:
+               while i<=19:
+                    data.append(ws.cell(j,i).value)                                 #taking data and adding a list from excel file         
+                    i=i+1
+               print(data)                                                          #print datas of the row 
+               return data
+          except ValueError:
+               return print('Row count must be least 1.')            
+          
      
      #Writing to the text file
-     def WriteText(self,list,j):
+     def WriteText(self,TxtFile,list,j):
           #Write text
-          f = open("ArgumentFile.txt","a")                                     #opening for writing the file
-
+          f = open(TxtFile,"a")                                     #opening for writing the file
+          
           #create a string for first text
-          paragh = '--doc This is a test suite  for Setup:'+str(list[0])+':Mode:'+str(list[1])+':UeType:'+str(list[2])+':UeNum:'+str(list[3])+':Freq:'+str(list[4])+':UeAttachIter:'+str(list[5])+':Dryrun:'+str(list[6])+':DLTxCoeff:'+str(list[7])+':DLRxCoeff:'+str(list[8])+':DuTrV:'+str(list[9])+':CuUpTrV:'+str(list[10])+':subTestSuiteName:'+str(list[11])+':androidUeList:'+str(list[12])+':TagList:'+str(list[13])+':phyRunArg:'+str(list[14])+':ULTxCoeff:'+str(list[15])+':ULRxCoeff:'+str(list[16])+':ConfiguredCellNumber:'+str(list[17])+':ActivatedCellIndexList:'+str(list[18])
+          paragh = '--doc This is a test suite for Setup:'+str(list[0])+':Mode:'+str(list[1])+':UeType:'+str(list[2])+':UeNum:'+str(list[3])+':Freq:'+str(list[4])+':UeAttachIter:'+str(list[5])+':Dryrun:'+str(list[6])+':DLTxCoeff:'+str(list[7])+':DLRxCoeff:'+str(list[8])+':DuTrV:'+str(list[9])+':CuUpTrV:'+str(list[10])+':subTestSuiteName:'+str(list[11])+':androidUeList:'+str(list[12])+':TagList:'+str(list[13])+':phyRunArg:'+str(list[14])+':ULTxCoeff:'+str(list[15])+':ULRxCoeff:'+str(list[16])+':ConfiguredCellNumber:'+str(list[17])+':ActivatedCellIndexList:'+str(list[18])
       
           #write the text into .txt file
           f.write(paragh)
@@ -91,5 +96,7 @@ class RobotTestSuiteRunner():
           f.close()
           j = j+1    
           return j
-           
-RobotTestSuiteRunner().Operate()
+
+TxtFile = "ArgumentFile.txt"
+ExcelFile = 'RobotTestSuitesParamsList(deneme).xlsx'          
+#RobotTestSuiteRunner().Operate(TxtFile,ExcelFile)
