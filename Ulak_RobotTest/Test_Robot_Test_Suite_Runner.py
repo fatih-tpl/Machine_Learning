@@ -94,8 +94,18 @@ class TestRobotTestSuiteRunner(unittest.TestCase):
         processor.Operate('dummy_txt_file.txt', 'dummy_excel_file.xlsx')
         mock_stdout.write.assert_called_with('\n')
 
+    def testOperateEmptyData(self):
+        self.mock = RobotTestSuiteRunner()
+        self.mock.WriteText = MagicMock(return_value=3)                                   #Mock WriteText return j=3
 
-      
+        self.mock.ReadingColumn = MagicMock(side_effect=[[None]*5, [1, 2, 3], [None]*5])  #Mock ReadingColumn return first=> None, second=>[1,2,3], third=>None
+
+        self.mock.CheckingEmptyRows = MagicMock(side_effect=[True, False, True])          #Mock CheckingEmptyRows return first=> True, second=>False, third=>True        
+
+        self.mock.Operate('someTxtFile.txt', 'someExcelFile.xlsx')                        #Calling Operate method
+
+        self.mock.WriteText.assert_called_with('someTxtFile.txt', [1, 2, 3], 3)           #Chechking WriteText methods to calling true arguments
+
 if __name__ == '__main__':
     unittest.main()
 
